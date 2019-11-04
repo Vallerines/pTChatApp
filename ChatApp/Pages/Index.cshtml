@@ -1,0 +1,54 @@
+﻿@page
+<div class="container">
+    <script src="~/js/angular.min.js"></script>
+    <script src="~/js/angular-color-picker-1.0.11/angular-color-picker.js"></script>
+    <link rel="stylesheet" href="~/js/angular-color-picker-1.0.11/angular-color-picker.css">
+
+    <script>
+        var app = angular.module("pT", ['mp.colorPicker']);
+
+        app.controller("chat", function ($scope, $http) {
+            getUsers();
+
+            function getUsers() {
+                $http.get("/api/user").then(function (response) {
+                    $scope.users = response.data;
+                });
+            }
+
+            $scope.addUser = function(n, c) {
+                $scope.username = n;
+                $scope.colour = c;
+            }
+        });
+    </script>
+
+    <div class="content" ng-app="pT" ng-controller="chat">
+        <!-- USER PANEL -->
+        <div class="col">
+            <h3>Returning user?</h3>
+            <div class="userbox">
+                <div ng-repeat="user in users">
+                    <div class="selectUser" ng-click="addUser(user.name, user.colour)" style="color:{{user.colour}}">{{user.name}}</div>
+                </div>
+            </div><br />
+            <h3>New user?</h3>
+            Username: <input type="text" ng-model="username" id="userInput" /><br>
+            Text Colour:<br> <color-picker ng-model="colour"></color-picker>
+            <input type="text" ng-model="colour" ng-init="colour='#fff000'" />
+            <button ng-click="addUser(username, colour)">Enter Chat</button>
+        </div>
+
+        <!-- CHAT PANEL -->
+        <div class="col">
+            <div class="chatbox" id="messagesList" ng-style="{color : colour}"></div>
+            <input type="text" id="messageInput" />
+            <button id="sendButton">send</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+
+
